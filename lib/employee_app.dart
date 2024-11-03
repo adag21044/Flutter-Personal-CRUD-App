@@ -28,25 +28,18 @@ class _EmployeeAppState extends State<EmployeeApp> {
     setState(() {
       _employeeList = data;
     });
-    print("Current Employees: $_employeeList"); // Print the employee list
   }
 
   /// Adds a new employee record to the database
   Future<void> _addEmployee() async {
-  // Print statements to check the values being inserted
-  print("Adding Employee: ${_firstNameController.text}, ${_lastNameController.text}, ${_departmentController.text}, ${_salaryController.text}");
-
     await DatabaseHelper.instance.addEmployee({
       'firstName': _firstNameController.text,
       'lastName': _lastNameController.text,
       'department': _departmentController.text,
       'salary': int.tryParse(_salaryController.text) ?? 0,
     });
-
-    print("Employee added successfully");
     _refreshEmployeeList();
   }
-
 
   /// Deletes an employee record from the database by id
   Future<void> _deleteEmployee(int id) async {
@@ -91,12 +84,14 @@ class _EmployeeAppState extends State<EmployeeApp> {
               child: ListView.builder(
                 itemCount: _employeeList.length,
                 itemBuilder: (context, index) {
+                  final employee = _employeeList[index];
                   return ListTile(
-                    title: Text('${_employeeList[index]['firstName']} ${_employeeList[index]['lastName']}'),
-                    subtitle: Text('${_employeeList[index]['department']} - Salary: ${_employeeList[index]['salary']}'),
+                    title: Text('${employee['firstName']} ${employee['lastName']}'),
+                    subtitle: Text('${employee['department']} - Salary: ${employee['salary']}'),
+                    leading: Text('ID: ${employee['id']}'), // Display the ID
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
-                      onPressed: () => _deleteEmployee(_employeeList[index]['id']),
+                      onPressed: () => _deleteEmployee(employee['id']),
                     ),
                   );
                 },
